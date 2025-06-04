@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QR Code Maker - Stylish & Advanced | GoQRGen.com</title>
+  <meta name="description" content="Generate stylish QR Codes instantly with support for text, URL, WiFi, email, phone, and more. Download your QR Code easily.">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      color: #00e0ff;
+    }
+    .description {
+      max-width: 800px;
+      margin: 0 auto 30px;
+      text-align: center;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #d1d1d1;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #1a1a2e;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    label {
+      margin: 10px 0 5px;
+      display: block;
+      font-weight: bold;
+    }
+    select, input, button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+    button {
+      background: #00e0ff;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #00bcd4;
+    }
+    canvas {
+      display: block;
+      margin: 20px auto;
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .after-tool-info {
+      margin: 40px auto 20px;
+      max-width: 800px;
+      text-align: center;
+      font-size: 1.05rem;
+      color: #d1d1d1;
+    }
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>QR Code Maker Tool</h1>
+
+  <div class="description">
+    <p>Generate custom QR Codes instantly using this free and modern <a href="https://goqrgen.com/generator">QR Code Maker</a>. Whether you want to share a URL, send an email, connect to WiFi, or simply encode plain text, this tool lets you create a QR code in just one click.</p>
+    <p>Choose from multiple QR types including <strong>Text</strong>, <strong>URL</strong>, <strong>Email</strong>, <strong>Phone</strong>, and <strong>WiFi</strong>. After generating, you can easily <strong>download</strong> the QR Code in PNG format and use it anywhere.</p>
+  </div>
+
+  <div class="container">
+    <label for="type">Select QR Code Type:</label>
+    <select id="type">
+      <option value="text">Text</option>
+      <option value="url">URL</option>
+      <option value="email">Email</option>
+      <option value="tel">Phone</option>
+      <option value="wifi">WiFi</option>
+    </select>
+
+    <div id="inputs">
+      <input type="text" id="input" placeholder="Enter content...">
+    </div>
+
+    <button onclick="generateQR()">Generate QR Code</button>
+    <canvas id="qrcode"></canvas>
+    <button onclick="downloadQR()">Download QR Code</button>
+  </div>
+
+  <div class="after-tool-info">
+    <p>
+      QR codes are a fast and effective way to bridge the gap between offline and digital content. Whether you're running a business, organizing an event, or just sharing your contact info, QR codes simplify the process. You can print these QR codes on flyers, business cards, packaging, or even digital assets to make access easier for your audience.
+    </p>
+    <p style="margin-top: 20px;">
+      This QR Code Maker supports multiple formats and is built for both beginners and professionals. With advanced customization like WiFi QR, email, and phone number encoding, it's your one-stop solution for smart connectivity.
+    </p>
+  </div>
+
+  <footer>
+    Made with ❤️ by GoQRGen.com | Stylish QR Code Maker Tool
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script>
+    const typeSelect = document.getElementById('type');
+    const inputsDiv = document.getElementById('inputs');
+    const canvas = document.getElementById('qrcode');
+
+    typeSelect.addEventListener('change', updateInputs);
+
+    function updateInputs() {
+      const type = typeSelect.value;
+      let html = '';
+
+      switch(type) {
+        case 'text':
+          html = '<input type="text" id="input" placeholder="Enter text">';
+          break;
+        case 'url':
+          html = '<input type="text" id="input" placeholder="https://example.com">';
+          break;
+        case 'email':
+          html = '<input type="email" id="input" placeholder="example@mail.com">';
+          break;
+        case 'tel':
+          html = '<input type="tel" id="input" placeholder="+1234567890">';
+          break;
+        case 'wifi':
+          html = `
+            <input type="text" id="ssid" placeholder="WiFi SSID">
+            <input type="text" id="password" placeholder="WiFi Password">
+            <select id="encryption">
+              <option value="WPA">WPA/WPA2</option>
+              <option value="WEP">WEP</option>
+              <option value="nopass">No Password</option>
+            </select>
+          `;
+          break;
+      }
+
+      inputsDiv.innerHTML = html;
+    }
+
+    function generateQR() {
+      const type = typeSelect.value;
+      let content = '';
+
+      if (type === 'wifi') {
+        const ssid = document.getElementById('ssid').value;
+        const password = document.getElementById('password').value;
+        const enc = document.getElementById('encryption').value;
+        content = `WIFI:T:${enc};S:${ssid};P:${password};;`;
+      } else {
+        const input = document.getElementById('input').value;
+        if (type === 'url') content = input;
+        else if (type === 'email') content = `mailto:${input}`;
+        else if (type === 'tel') content = `tel:${input}`;
+        else content = input;
+      }
+
+      QRCode.toCanvas(canvas, content, { width: 250 }, function (error) {
+        if (error) console.error(error);
+      });
+    }
+
+    function downloadQR() {
+      const link = document.createElement('a');
+      link.download = 'qrcode.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+
+    updateInputs(); // Initialize input on load
+  </script>
+
+</body>
+</html>
